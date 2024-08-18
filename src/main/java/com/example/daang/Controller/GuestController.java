@@ -89,15 +89,16 @@ public class GuestController {
         bookingDetailsRepository.updateIsDeletedStatus();
         List<Room> filteredRooms = new ArrayList<>();
 
-        for (Room room : availableRooms) {
-            if ((type == null || room.getType().equals(type))) {
-                filteredRooms.add(room);
-            }
-        }
+       List<Room> filteredRooms = availableRooms.stream()
+                .filter(room -> type == null || room.getType().equals(type))
+                .filter(room -> capacity == null || room.getCapacity() >= capacity)
+                .filter(room -> price == null || room.getPrice() <= price)
+                .filter(room -> isRoomAvailable(room, startDate, endDate)) // Check room availability
+                .collect(Collectors.toList());
                 
 //          List<Room> deletedRooms = availableRooms.stream()
 //        		  .filter(room -> type == null || room.getType().equals(type))
-//                  .filter(room -> capacity == null || room.getCapacity() >= capacity)
+//                  .filter(room+ -> capacity == null || room.getCapacity() >= capacity)
 //                  .filter(room -> price == null || room.getPrice() <= price)
 //                .filter(room -> bookingDetailsRepository.existsByRoomAndIsdeletedIsTrue(room)) // Filter rooms marked as deleted
 //                .collect(Collectors.toList());
